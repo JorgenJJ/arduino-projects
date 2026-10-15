@@ -43,3 +43,7 @@ The button uses the internal pull-up resistor, so it needs no external resistor.
 
 - **Backlight is on, but no text:** turn the blue contrast screw on the back of the LCD.
 - **Screen stays blank:** change the I2C address from `0x27` to `0x3F`. Run an I2C scanner sketch to find it.
+
+## Earlier versions
+
+- [OLED version](https://github.com/JorgenJJ/arduino-projects/tree/beer-pour-tracker-oled/projects/beer-pour-tracker) (2.42" SSD1309, tag `beer-pour-tracker-oled`)
