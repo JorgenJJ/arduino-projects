@@ -1,12 +1,12 @@
-#include <U8g2lib.h>
+#include <LiquidCrystal_I2C.h>
 
 const uint8_t BUTTON_PIN = 2;
 const unsigned long DEBOUNCE_MS = 50;
 const float FLOW_L_PER_S = 0.059;      // 2 oz/s, common tap design rate
 const float CO2_G_PER_L = 1.6 / 0.33;  // lager
 
-// Page buffer (_2_) saves RAM on the Uno. Try NONAME2 if the image is shifted.
-U8G2_SSD1309_128X64_NONAME0_2_HW_I2C display(U8G2_R0);
+// Try 0x3F if the screen stays blank
+LiquidCrystal_I2C lcd(0x27, 16, 2);
 
 bool pouring = false;
 float pouredL = 0;
@@ -14,8 +14,11 @@ unsigned long lastUpdateMs = 0;
 
 void setup() {
   pinMode(BUTTON_PIN, INPUT_PULLUP);
-  display.setBusClock(400000);
-  display.begin();
+  lcd.init();
+  lcd.backlight();
+  lcd.print("Beer");
+  lcd.setCursor(0, 1);
+  lcd.print("CO2");
 }
 
 void loop() {
@@ -40,20 +43,14 @@ bool buttonPressed() {
   return state == LOW;
 }
 
+// Fixed-width fields overwrite old values, so the screen never needs clear()
 void draw() {
-  display.firstPage();
-  do {
-    display.setFont(u8g2_font_6x10_tr);
-    display.drawStr(0, 10, pouring ? "POURING" : "STOPPED");
-    display.drawStr(0, 34, "Beer");
-    display.drawStr(0, 58, "CO2");
-
-    display.setFont(u8g2_font_helvB14_tr);
-    display.setCursor(36, 36);
-    display.print(pouredL, 2);
-    display.print(" L");
-    display.setCursor(36, 60);
-    display.print(pouredL * CO2_G_PER_L, 1);
-    display.print(" g");
-  } while (display.nextPage());
+  char value[8];
+  lcd.setCursor(5, 0);
+  lcd.print(dtostrf(pouredL, 5, 2, value));
+  lcd.print(" L ");
+  lcd.print(pouring ? "POUR" : "STOP");
+  lcd.setCursor(5, 1);
+  lcd.print(dtostrf(pouredL * CO2_G_PER_L, 5, 1, value));
+  lcd.print(" g");
 }

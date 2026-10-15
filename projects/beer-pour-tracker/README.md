@@ -1,6 +1,6 @@
 # Beer pour tracker
 
-Prototype that tracks how much beer is poured, and how much CO2 is in it. The OLED shows the totals. A button starts and stops a simulated pour.
+Prototype that tracks how much beer is poured, and how much CO2 is in it. The LCD shows the totals. A button starts and stops a simulated pour.
 
 ## How it works
 
@@ -12,7 +12,7 @@ Prototype that tracks how much beer is poured, and how much CO2 is in it. The OL
 
 - Board: Arduino Uno R3 (compatible)
 - Components:
-  - OLED 2.42" 128x64, SSD1309, I2C
+  - LCD 16x2 (1602) with I2C backpack
   - Push button
   - Breadboard and jumper wires
 
@@ -20,10 +20,10 @@ Prototype that tracks how much beer is poured, and how much CO2 is in it. The OL
 
 | Component pin | Arduino pin |
 |---------------|-------------|
-| OLED GND      | GND         |
-| OLED VCC      | 5V          |
-| OLED SCL      | SCL (or A5) |
-| OLED SDA      | SDA (or A4) |
+| LCD GND       | GND         |
+| LCD VCC       | 5V          |
+| LCD SDA       | SDA (or A4) |
+| LCD SCL       | SCL (or A5) |
 | Button leg 1  | D2          |
 | Button leg 2  | GND         |
 
@@ -33,7 +33,7 @@ The button uses the internal pull-up resistor, so it needs no external resistor.
 
 ## Libraries
 
-- [U8g2](https://github.com/olikraus/u8g2) (install from the Library Manager)
+- [LiquidCrystal I2C](https://github.com/johnrickman/LiquidCrystal_I2C) by Frank de Brabander (install from the Library Manager)
 
 ## Code
 
@@ -41,5 +41,5 @@ The button uses the internal pull-up resistor, so it needs no external resistor.
 
 ## Troubleshooting
 
-- **Image is shifted by 2 pixels:** change `NONAME0` to `NONAME2` in the display constructor.
-- **Screen stays black:** check that the I2C address is 0x3C. Run an I2C scanner sketch to find it.
+- **Backlight is on, but no text:** turn the blue contrast screw on the back of the LCD.
+- **Screen stays blank:** change the I2C address from `0x27` to `0x3F`. Run an I2C scanner sketch to find it.
