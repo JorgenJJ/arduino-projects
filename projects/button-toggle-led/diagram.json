@@ -1,0 +1,19 @@
+{
+  "version": 1,
+  "author": "Jørgen Jærnes",
+  "editor": "wokwi",
+  "parts": [
+    { "type": "wokwi-arduino-uno", "id": "uno", "top": 0, "left": 0, "attrs": {} },
+    { "type": "wokwi-led", "id": "led1", "top": -110, "left": 0, "attrs": { "color": "red" } },
+    { "type": "wokwi-resistor", "id": "r1", "top": -50, "left": 40, "attrs": { "value": "220" } },
+    { "type": "wokwi-pushbutton", "id": "btn1", "top": -70, "left": 290, "attrs": { "color": "green" } }
+  ],
+  "connections": [
+    [ "uno:13", "r1:2", "green", [ "v-53.35" ] ],
+    [ "r1:1", "led1:A", "green", [ "h-15" ] ],
+    [ "led1:C", "uno:GND.1", "black", [ "v48" ] ],
+    [ "btn1:1.l", "uno:2", "orange", [ "h-10", "*", "v20" ] ],
+    [ "btn1:2.r", "uno:GND.3", "black", [ "h15", "v250" ] ]
+  ],
+  "dependencies": {}
+}
