@@ -35,6 +35,10 @@ The button uses the internal pull-up resistor, so it needs no external resistor.
 
 - [U8g2](https://github.com/olikraus/u8g2) (install from the Library Manager)
 
+## Code
+
+[beer-pour-tracker.ino](beer-pour-tracker.ino ':include :type=code')
+
 ## Troubleshooting
 
 - **Image is shifted by 2 pixels:** change `NONAME0` to `NONAME2` in the display constructor.

@@ -1,0 +1,4 @@
+- [Home](/)
+- [Inventory](/inventory.md)
+- Projects
+  - [Beer pour tracker](/projects/beer-pour-tracker/README.md)

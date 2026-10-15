@@ -18,3 +18,7 @@ Short description.
 ## Libraries
 
 -
+
+## Code
+
+[_template.ino](_template.ino ':include :type=code')
