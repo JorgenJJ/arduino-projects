@@ -31,8 +31,6 @@ The button uses the internal pull-up resistor, so it needs no external resistor.
 
 [Wokwi diagram](diagram.json)
 
-![Wiring](wiring.jpg)
-
 ## Libraries
 
 - [U8g2](https://github.com/olikraus/u8g2) (install from the Library Manager)
