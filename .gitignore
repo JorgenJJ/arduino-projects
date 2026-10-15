@@ -1,0 +1,8 @@
+# Build output (arduino-cli --export-binaries)
+build/
+
+# Editor / OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
