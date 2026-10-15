@@ -34,6 +34,10 @@ All components available for projects.
 | IR receiver | | 1 | Use with IR remote |
 | RFID module | RC522 | 1 | SPI, **3.3V only** |
 | Real-time clock module | DS1302 | 1 | 3-wire serial |
+| Load cell + amplifier | 5 kg bar load cell, HX711 | 1 set | 2 digital pins (DT, SCK); acrylic scale plates included |
+| Water flow sensor | Hall effect, 1.2 mm inlet | 1 | 0.05–1 L/min, Hz = 86 × L/min (~5160 pulses/L); 3.5–24V; use interrupt pin |
+| Water flow sensor | Hall effect, 2.5 mm inlet | 1 | 0.3–4 L/min, Hz = 43 × L/min (~2580 pulses/L); 3.5–24V; use interrupt pin |
+| Temperature and humidity sensor | Zigbee 3.0, LCD | 3 | Not for Arduino; pairs with Home Assistant via Zigbee hub |
 
 ## Input
 
