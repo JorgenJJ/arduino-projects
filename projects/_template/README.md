@@ -13,6 +13,8 @@ Short description.
 |---------------|-------------|
 |               |             |
 
+![Wiring](wiring.jpg)
+
 ## Libraries
 
 -
