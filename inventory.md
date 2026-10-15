@@ -1,6 +1,6 @@
 # Inventory
 
-All components available for projects.
+All components available for projects. Most come from the ACEBOTT Complete Starter Kit.
 
 ## Boards and power
 
