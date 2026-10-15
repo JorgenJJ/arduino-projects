@@ -22,8 +22,8 @@ Prototype that tracks how much beer is poured, and how much CO2 is in it. The OL
 |---------------|-------------|
 | OLED GND      | GND         |
 | OLED VCC      | 5V          |
-| OLED SCL      | A5          |
-| OLED SDA      | A4          |
+| OLED SCL      | SCL (or A5) |
+| OLED SDA      | SDA (or A4) |
 | Button leg 1  | D2          |
 | Button leg 2  | GND         |
 
