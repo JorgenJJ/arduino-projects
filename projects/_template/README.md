@@ -13,6 +13,8 @@ Short description.
 |---------------|-------------|
 |               |             |
 
+[Wokwi diagram](diagram.json)
+
 ![Wiring](wiring.jpg)
 
 ## Libraries

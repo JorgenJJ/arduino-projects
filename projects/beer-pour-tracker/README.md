@@ -29,6 +29,8 @@ Prototype that tracks how much beer is poured, and how much CO2 is in it. The OL
 
 The button uses the internal pull-up resistor, so it needs no external resistor. Use two diagonal legs of the button.
 
+[Wokwi diagram](diagram.json)
+
 ![Wiring](wiring.jpg)
 
 ## Libraries
