@@ -14,7 +14,22 @@
     }
   });
 
-  const walk = ([x, y], steps) => [[x, y], ...steps.map(s => s[0] === 'v' ? [x, y += +s.slice(1)] : [x += +s.slice(1), y])];
+  // Seeed XIAO ESP32-C6 (top view, USB up)
+  customElements.define('board-xiao-esp32-c6', class extends HTMLElement {
+    pinInfo = [...['D0', 'D1', 'D2', 'D3', 'D4', 'D5', 'D6'].map((name, i) => ({ name, x: 5, y: 22 + i * 10 })),
+      ...['5V', 'GND', '3V3', 'D10', 'D9', 'D8', 'D7'].map((name, i) => ({ name, x: 67, y: 22 + i * 10 }))];
+    connectedCallback() {
+      this.innerHTML = `<svg width="72" height="92" font-family="sans-serif" font-size="5" fill="#fff">
+        <rect width="72" height="92" rx="4" fill="#1a1a1a"/>
+        <rect x="24" y="-4" width="24" height="12" rx="2" fill="#999"/>
+        <rect x="22" y="36" width="28" height="28" fill="#333"/>
+        <text x="36" y="86" text-anchor="middle">XIAO C6</text>
+        ${this.pinInfo.map(p => `<circle cx="${p.x}" cy="${p.y}" r="3" fill="#c9a33a"/><text x="${p.x < 36 ? p.x + 5 : p.x - 5}" y="${p.y + 2}" text-anchor="${p.x < 36 ? 'start' : 'end'}">${p.name}</text>`).join('')}
+      </svg>`;
+    }
+  });
+
+  const walk =([x, y], steps) => [[x, y], ...steps.map(s => s[0] === 'v' ? [x, y += +s.slice(1)] : [x += +s.slice(1), y])];
 
   async function draw(link, url) {
     const [, diagram] = await Promise.all([elements, fetch(url).then(r => r.json())]);
@@ -64,7 +79,7 @@
   }
 
   window.$docsify.plugins = [...(window.$docsify.plugins ?? []), (hook, vm) => hook.doneEach(() => {
-    const link = document.querySelector('.markdown-section a[href$="diagram.json"]');
-    if (link) draw(link, vm.route.file.replace(/[^/]*$/, 'diagram.json'));
+    document.querySelectorAll('.markdown-section a[href$=".json"]').forEach(link =>
+      draw(link, vm.route.file.replace(/[^/]*$/, link.getAttribute('href').split('/').pop())));
   })];
 })();

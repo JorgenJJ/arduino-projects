@@ -3,3 +3,4 @@
 - Projects
   - [Button toggle LED](/projects/button-toggle-led/README.md)
   - [Beer pour tracker](/projects/beer-pour-tracker/README.md)
+  - [Rat monitor](/projects/rat-monitor/README.md)

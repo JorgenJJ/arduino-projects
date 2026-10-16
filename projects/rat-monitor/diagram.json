@@ -1,0 +1,15 @@
+{
+  "version": 1,
+  "author": "Jørgen Jærnes",
+  "editor": "wokwi",
+  "parts": [
+    { "type": "board-xiao-esp32-c6", "id": "xiao", "top": 0, "left": 0, "attrs": {} },
+    { "type": "wokwi-pir-motion-sensor", "id": "pir1", "top": -130, "left": 20, "attrs": {} }
+  ],
+  "connections": [
+    [ "pir1:VCC", "xiao:3V3", "red", [ "v10", "*", "h-25" ] ],
+    [ "pir1:GND", "xiao:GND", "black", [ "v20", "*", "h-15" ] ],
+    [ "pir1:OUT", "xiao:D1", "green", [ "v30", "*", "h20" ] ]
+  ],
+  "dependencies": {}
+}
