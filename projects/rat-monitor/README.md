@@ -85,29 +85,33 @@ flowchart LR
 - The hub uses the router's Wi-Fi channel, so the nodes must send on that channel. Set a fixed channel on the router, or let the nodes scan when a send fails ([Espressif ESP-NOW](https://docs.espressif.com/projects/esp-idf/en/stable/esp32/api-reference/network/esp_now.html)).
 - For a weak link: use the XIAO external antenna connector and ESP32 long-range (802.11 LR) mode on all devices.
 - Put the hub low on the 1st floor, directly above the basement, not behind metal.
+- All nodes can run the same code. A node can have a PIR, a climate sensor (see [Climate](#climate-optional)), or both.
+- A node sends one message per event, waits for the hub's reply, and sleeps again. If the hub does not reply, the node can try channels 1-13 and remember the one that works.
+- The hub can send each message to HA over MQTT with discovery, so new nodes show up in HA by themselves. HA needs the Mosquitto broker add-on and the MQTT integration.
+- Hub parts: any USB-powered ESP32, e.g. ESP32-C3 SuperMini (~$3) or XIAO ESP32-C6 (~$6), plus a USB charger.
 
-How option B works:
+Not feasible: battery nodes that talk to each other without a hub, because a sleeping node cannot listen.
 
-- All nodes run the same code. A node can have a PIR, an SHT40 climate sensor (optional), or both. Set `HAS_PIR = false` for a climate-only node. The SHT40 is found on I2C at boot.
-- A node wakes on the PIR or every 15 min (timer), sends one message, waits for the hub's reply, and sleeps again.
-- The node finds the hub's channel itself: if the hub does not reply, it tries channels 1-13 and remembers the one that works.
-- The hub replies with the deterrent ON/OFF state (an HA switch), and sends each message to HA over MQTT. HA finds new nodes by itself (MQTT discovery). The node ID is the end of its MAC address.
+### Climate (optional)
 
-### Climate (optional, option B)
-
-Temperature and humidity in the basement, from the same nodes. Add an SHT40 to any node; nothing else changes.
+Temperature and humidity in the basement can be added to any of the options above. One SHT40 sensor (~$3, I2C) per measuring point.
 
 - Dirt-floor basements often stay above 80 % RH. Above ~75-80 % for long periods there is a risk of mould.
 - Compare the dew point inside and outside: ventilation only dries the basement when the outdoor air has a lower dew point. HA can compute the dew point, and take outdoor values from a weather integration (for example Met.no), so no outdoor sensor is needed.
-- An optional SHT40 on the hub measures the 1st floor.
-- Power: an ESP-NOW send takes a fraction of a second, so a reading every 15 min adds little to the battery use.
+- The node needs a timer wake (e.g. every 15 min) in addition to the PIR wake.
 
-Not feasible: battery nodes that talk to each other without a hub, because a sleeping node cannot listen.
+| Option | How climate fits | Pros | Cons |
+|--------|------------------|------|------|
+| **HA** (Zigbee nodes) | SHT40 on one or more nodes. Add a temperature/humidity endpoint next to the occupancy endpoint | Shows as the same device in HA | Each reading needs a Zigbee rejoin after deep sleep (a few seconds), so it costs more battery than ESP-NOW |
+| **A. One controller** | SHT40 on the controller, or on a short cable from it | Cheapest: one sensor, no extra board | One measuring point only |
+| **B. Nodes + hub** | SHT40 on any node. The hub can also have one for the 1st floor | An ESP-NOW send takes a fraction of a second, so readings cost little battery | Needs the hub and own code |
+
+Without a build: a ready-made Zigbee sensor (e.g. Sonoff SNZB-02, ~$10) pairs with HA directly, but coin cells and cheap sensors often handle cold and condensation poorly.
 
 ### Phases
 
 1. **Monitor node**: XIAO ESP32-C6 + PIR + 18650. Build one, then copy to 2-3 zones.
-   - Optional (option B): SHT40 for temperature and humidity on one or more nodes.
+   - Optional: SHT40 for temperature and humidity (see [Climate](#climate-optional)).
 2. **Deterrent experiment**: add ultrasonic piezo + LED strobe. Alternate ON and OFF weeks and compare visits per night.
 3. **Confirmation**: IR camera node and/or IR break-beam.
 4. **Optional**: ultrasonic audio node that listens for rat calls.
@@ -133,12 +137,12 @@ Not feasible: battery nodes that talk to each other without a hub, because a sle
 - Locating sounds with several mics (TDOA) works in the audible band, but is hard at ultrasonic rates on a hobby budget ([BEEI](https://beei.org/index.php/EEI/article/view/10523)).
 - ESP32-CAM + PIR + an image classifier can tell rats from other animals ([UniKore](https://iris.unikore.it/handle/11387/181026)). No public rat dataset exists, so own IR images are necessary.
 
+**Design decision:** a low-power PIR is the trigger. One node per zone gives coarse location. Audio and camera are later, secondary sensors.
+
 ### Climate sensor
 
 - DHT11 (in the [inventory](/inventory.md)) measures only 20-80 % RH at ±5 %, so it misses the high values in a basement. DHT22 drifts in high humidity.
-- Sensirion SHT40: ±1.8 % RH, ±0.2 °C, ~0.1 µA idle, and a built-in heater to recover after condensation ([Sensirion SHT4x datasheet](https://sensirion.com/products/catalog/SHT40)).
-
-**Design decision:** a low-power PIR is the trigger. One node per zone gives coarse location. Audio and camera are later, secondary sensors.
+- Sensirion SHT40: ±1.8 % RH, ±0.2 °C, ~0.1 µA idle, and a built-in heater to recover after condensation ([Sensirion SHT4x](https://sensirion.com/products/catalog/SHT40)).
 
 ### Power and radio
 
@@ -158,15 +162,9 @@ Not feasible: battery nodes that talk to each other without a hub, because a sle
   - 18650 Li-ion cell + holder (~$6). Use LiFePO4 if the basement is cold.
   - Small box and mounting bracket
 
-### Option B (hub + nodes)
+### Climate (optional, all options)
 
-- Hub: any USB-powered ESP32, e.g. ESP32-C3 SuperMini (~$3) or XIAO ESP32-C6 (~$6), plus a USB charger.
-- Node: same as phase 1. A climate-only node has no PIR.
-- Home Assistant: Mosquitto broker add-on and the MQTT integration.
-
-### Climate (optional)
-
-- SHT40 module, I2C (~$3) per node, and one for the hub if you want 1st floor values.
+- SHT40 module, I2C (~$3) per measuring point.
 - Put the board in a closed box, but give the sensor air: a box with holes facing down, or the sensor on a short cable outside the box. Keep it off the soil and away from vents.
 
 ### Options
@@ -206,22 +204,7 @@ D1 (GPIO1) is a low-power GPIO, so it can wake the chip from deep sleep. USB-C c
 
 [Wokwi diagram](diagram.json)
 
-### Option B node
-
-Same as the node above, plus the optional SHT40:
-
-| Component pin | XIAO pin |
-|---------------|----------|
-| SHT40 VCC (optional) | 3V3 |
-| SHT40 GND (optional) | GND |
-| SHT40 SDA (optional) | D4 (SDA) |
-| SHT40 SCL (optional) | D5 (SCL) |
-
-A climate-only node has no PIR. Set `HAS_PIR = false` in the code.
-
-### Option B hub
-
-Any USB-powered ESP32. No parts are needed. The SHT40 is optional and uses the same wiring as on the node (SDA/SCL pins of the board).
+Option B uses the same node wiring. The hub is any USB-powered ESP32 with no extra parts.
 
 ### Option A controller
 
@@ -237,15 +220,22 @@ Any USB-powered ESP32. No parts are needed. The SHT40 is optional and uses the s
 
 D0-D2 (GPIO0-2) are low-power GPIOs, so each one can wake the chip. Use 3-core cable (2-4 m) from each PIR to the board.
 
+### Climate sensor (optional, all options)
+
+| Component pin | XIAO pin |
+|---------------|----------|
+| SHT40 VCC     | 3V3      |
+| SHT40 GND     | GND      |
+| SHT40 SDA     | D4 (SDA) |
+| SHT40 SCL     | D5 (SCL) |
+
+D4 and D5 are free in all options. On the option B hub, use the SDA/SCL pins of the board.
+
 [Wokwi diagram, option A](diagram-option-a.json)
 
 ## Libraries
 
 - Zigbee (included in the [Arduino ESP32 core](https://github.com/espressif/arduino-esp32) 3.x)
-- Option B:
-  - ESP-NOW and Wi-Fi (included in the Arduino ESP32 core 3.x)
-  - [PubSubClient](https://github.com/knolleary/pubsubclient) by Nick O'Leary (hub only, install from the Library Manager)
-  - `RatMonitor` in [libraries/RatMonitor](https://github.com/JorgenJJ/arduino-projects/tree/main/libraries/RatMonitor): the message format and the SHT40 reader, shared by node and hub. The IDE finds it when the sketchbook location is this repo.
 
 Arduino IDE settings:
 - Board: XIAO_ESP32C6
@@ -254,31 +244,11 @@ Arduino IDE settings:
 
 ## Code
 
-### Zigbee node (HA default)
-
 [rat-monitor.ino](rat-monitor.ino ':include :type=code')
-
-### Option B node
-
-Board: XIAO_ESP32C6. Set `HAS_PIR` at the top.
-
-[node.ino](node/node.ino ':include :type=code')
-
-### Option B hub
-
-Copy `hub/secrets.example.h` to `hub/secrets.h` and fill in Wi-Fi and MQTT. `secrets.h` is not committed.
-
-[hub.ino](hub/hub.ino ':include :type=code')
-
-### Shared (option B)
-
-[RatMonitor.h](../../libraries/RatMonitor/RatMonitor.h ':include :type=code')
 
 ## Home Assistant
 
 - Pair: put ZHA or Zigbee2MQTT in pairing mode, then power the node. It shows as an occupancy sensor.
 - Check link quality (LQI) with the node in place before you mount it. Move the coordinator or add a Zigbee router if it is poor.
-- Option B: install the Mosquitto broker add-on and the MQTT integration. Start the hub, then power each node. The hub prints its Wi-Fi channel on the serial monitor. Nodes show up as devices named "Rat monitor <id>", with Motion and/or Temperature and Humidity. The hub adds a Deterrent switch.
-- Option B: temperature and humidity show as unavailable if a node misses about 3 readings (flat battery or no link).
-- Climate: add a [Dew point](https://www.home-assistant.io/integrations/template/) template sensor, and an automation that warns when humidity stays above 80 %.
+- Climate (optional): add a dew point [template sensor](https://www.home-assistant.io/integrations/template/), and an automation that warns when humidity stays above 80 %.
 - Count visits per night with a [History stats](https://www.home-assistant.io/integrations/history_stats/) helper (type: count, state: on).
